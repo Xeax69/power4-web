@@ -1,0 +1,53 @@
+{{define "content"}}
+<div class="game-container">
+    <div class="game-status">
+        {{if eq .GameState "playing"}}
+            <h2>Tour du joueur {{.CurrentPlayer}}</h2>
+            <p class="player-{{.CurrentPlayer}}">À vous de jouer !</p>
+        {{else if eq .GameState "won"}}
+            <h2>🎉 Victoire ! 🎉</h2>
+            <p class="player-{{.Winner}}">Le joueur {{.Winner}} a gagné !</p>
+        {{else if eq .GameState "draw"}}
+            <h2>🤝 Match nul ! 🤝</h2>
+            <p>Le plateau est plein !</p>
+        {{end}}
+    </div>
+
+    {{if eq .GameState "playing"}}
+    <div class="column-buttons">
+        {{range $col := iterate 7}}
+        <form method="POST" action="/move" style="display: inline;">
+            <input type="hidden" name="column" value="{{$col}}">
+            <button type="submit" class="column-btn">
+                ↓ {{add $col 1}}
+            </button>
+        </form>
+        {{end}}
+    </div>
+    {{end}}
+
+    <div class="board">
+        {{range $row := .Board}}
+        <div class="board-row">
+            {{range $cell := $row}}
+            <div class="cell">
+                {{if eq $cell 0}}
+                    <div class="token empty"></div>
+                {{else if eq $cell 1}}
+                    <div class="token player1"></div>
+                {{else if eq $cell 2}}
+                    <div class="token player2"></div>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+
+    <div class="controls">
+        <form method="POST" action="/reset">
+            <button type="submit" class="reset-btn">🔄 Nouvelle partie</button>
+        </form>
+    </div>
+</div>
+{{end}}
