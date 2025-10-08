@@ -1,0 +1,60 @@
+{{template "base.html" .}}
+
+{{define "content"}}
+<div class="victory-container">
+    {{if eq .GameState "won"}}
+    <div class="victory-section">
+        <h2 class="victory-title">🎉 VICTOIRE ! 🎉</h2>
+        <div class="winner-announcement">
+            <div class="winner-card player-{{.Winner}}">
+                <h3>{{if eq .Winner 1}}{{.Player1Name}}{{else}}{{.Player2Name}}{{end}}</h3>
+                <p>remporte la partie !</p>
+                <div class="winner-trophy">🏆</div>
+            </div>
+        </div>
+        
+        <div class="stats-section">
+            <h4>📊 Statistiques de la partie</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Difficulté :</span>
+                    <span class="stat-value">{{.Difficulty}}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Grille :</span>
+                    <span class="stat-value">{{.Rows}}x{{.Cols}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{else if eq .GameState "draw"}}
+    <div class="draw-section">
+        <h2 class="draw-title">🤝 MATCH NUL ! 🤝</h2>
+        <div class="draw-announcement">
+            <p>Excellent jeu de la part des deux joueurs !</p>
+            <div class="draw-icon">⚖️</div>
+            <p><strong>{{.Player1Name}}</strong> et <strong>{{.Player2Name}}</strong></p>
+            <p>sont à égalité parfaite !</p>
+        </div>
+    </div>
+    {{end}}
+
+    <div class="victory-actions">
+        <form method="POST" action="/rematch" style="display: inline;">
+            <button type="submit" class="rematch-btn">
+                🔄 Revanche !
+            </button>
+        </form>
+        
+        <form method="POST" action="/new-game" style="display: inline;">
+            <button type="submit" class="new-game-btn">
+                🆕 Nouvelle partie
+            </button>
+        </form>
+        
+        <a href="/" class="home-btn">
+            🏠 Retour à l'accueil
+        </a>
+    </div>
+</div>
+{{end}}

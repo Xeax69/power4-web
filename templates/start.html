@@ -1,0 +1,82 @@
+<!DOCTYPE html> 
+<html lang="fr">
+    <head> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{.Title}} - Puissance 4</title>
+        <link rel="stylesheet" href="/static/game.css">
+    </head>
+    <body> 
+        <header> 
+            <h1>🔴🟡 Puissance 4 🟡🔴</h1>
+        </header>
+        <main>
+<div class="start-container">
+    <div class="welcome-section">
+        <h2>🎮 Bienvenue sur le jeu du Puissance 4 🎮</h2>
+        <p>C'est partie pour le tryhard</p>
+    </div>
+
+    <form method="POST" action="/start-game" class="start-form">
+        <div class="players-section">
+            <h3>👥 Joueurs</h3>
+            
+            <div class="player-input">
+                <label for="player1">🔴 Joueur 1 (Rouge) :</label>
+                <input type="text" id="player1" name="player1" required 
+                       placeholder="Entrez votre nom" maxlength="20">
+            </div>
+            
+            <div class="player-input">
+                <label for="player2">🟡 Joueur 2 (Jaune) :</label>
+                <input type="text" id="player2" name="player2" required 
+                       placeholder="Entrez votre nom" maxlength="20">
+            </div>
+        </div>
+
+        <div class="difficulty-section">
+            <h3>⚡ Choisissez la difficulté</h3>
+            
+            <div class="difficulty-options">
+                <label class="difficulty-option">
+                    <input type="radio" name="difficulty" value="Facile" checked>
+                    <div class="difficulty-card easy">
+                        <h4>😊 Facile</h4>
+                        <p>Grille 6x7</p>
+                        <span class="recommended">Recommandé pour débuter</span>
+                    </div>
+                </label>
+                
+                <label class="difficulty-option">
+                    <input type="radio" name="difficulty" value="Moyen">
+                    <div class="difficulty-card normal">
+                        <h4>😎 Moyen</h4>
+                        <p>Grille 6x9</p>
+                        <span class="recommended">Difficulté équilibrée</span>
+                    </div>
+                </label>
+                
+                <label class="difficulty-option">
+                    <input type="radio" name="difficulty" value="Difficile">
+                    <div class="difficulty-card hard">
+                        <h4>😤 Difficile</h4>
+                        <p>Grille 7x8</p>
+                        <span class="recommended">Pour les experts</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="start-section">
+            <button type="submit" class="start-btn">
+                🚀 Go jouer l'équipe
+            </button>
+        </div>
+    </form>
+</div>
+        </main>
+        <footer> 
+            <p>Jeu dev par moi même</p>
+        </footer>
+    </body>
+</html>

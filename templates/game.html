@@ -1,4 +1,16 @@
-{{define "content"}}
+<!DOCTYPE html> 
+<html lang="fr">
+    <head> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{.Title}} - Puissance 4</title>
+        <link rel="stylesheet" href="/static/game.css">
+    </head>
+    <body> 
+        <header> 
+            <h1>🔴🟡 Puissance 4 🟡🔴</h1>
+        </header>
+        <main>
 <div class="game-container">
     <div class="game-status">
         {{if eq .GameState "playing"}}
@@ -15,7 +27,7 @@
 
     {{if eq .GameState "playing"}}
     <div class="column-buttons">
-        {{range $col := iterate 7}}
+        {{range $col := iterate .Cols}}
         <form method="POST" action="/move" style="display: inline;">
             <input type="hidden" name="column" value="{{$col}}">
             <button type="submit" class="column-btn">
@@ -50,4 +62,9 @@
         </form>
     </div>
 </div>
-{{end}}
+        </main>
+        <footer> 
+            <p>Jeu de Noé en go</p>
+        </footer>
+    </body>
+</html>

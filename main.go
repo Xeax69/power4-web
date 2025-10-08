@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
@@ -8,6 +10,13 @@ import (
 	"power4-web/models"
 	"strconv"
 )
+
+type Session struct {
+	ID   string
+	Game *models.Game
+}
+
+var sessions = make(map[string]*Session)
 
 var funcMap = template.FuncMap{
 	"iterate": func(count int) []int {
@@ -31,23 +40,35 @@ func init() {
 }
 
 func gameHandler(w http.ResponseWriter, r *http.Request) {
-	game := models.NewGame()
+	session := getSession(r)
+	setSession(w, session)
+
 	data := struct {
 		Title         string
 		Game          *models.Game
-		Board         [6][7]int
+		Board         [][]int
 		CurrentPlayer int
 		GameState     string
 		Winner        int
+		Player1Name   string
+		Player2Name   string
+		Difficulty    string
+		Rows          int
+		Cols          int
 	}{
 		Title:         "jeu",
-		Game:          game,
-		Board:         game.Board,
-		CurrentPlayer: game.CurrentPlayer,
-		GameState:     game.GameState,
-		Winner:        game.Winner,
+		Game:          session.Game,
+		Board:         session.Game.Board,
+		CurrentPlayer: session.Game.CurrentPlayer,
+		GameState:     session.Game.GameState,
+		Winner:        session.Game.Winner,
+		Player1Name:   session.Game.Player1Name,
+		Player2Name:   session.Game.Player2Name,
+		Difficulty:    session.Game.Difficulty,
+		Rows:          session.Game.Rows,
+		Cols:          session.Game.Cols,
 	}
-	err := templates.ExecuteTemplate(w, "base.html", data)
+	err := templates.ExecuteTemplate(w, "game.html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -59,14 +80,24 @@ func moveHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Méthode interdite", http.StatusMethodNotAllowed)
 		return
 	}
+	session := getSession(r)
 	colStr := r.FormValue("column")
 	col, err := strconv.Atoi(colStr)
 	if err != nil {
 		http.Error(w, "Colonne invalide", http.StatusBadRequest)
 		return
 	}
-	fmt.Printf("Coup reçu dans la colonne %d\n", col)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	err = session.Game.MakeMove(col)
+	if err != nil {
+		fmt.Printf("Erreur coup %v\n", err)
+	} else {
+		fmt.Printf("Coup joué dans la colonne %d\n", col)
+	}
+	if session.Game.GameState == "won" || session.Game.GameState == "draw" {
+		http.Redirect(w, r, "/victory", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+	}
 }
 
 func resetHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,14 +105,158 @@ func resetHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Println("Reset demandé")
+	session := getSession(r)
+	oldGame := session.Game
+	session.Game = models.NewGameWithDifficulty(
+		oldGame.Difficulty,
+		oldGame.Player1Name,
+		oldGame.Player2Name,
+	)
+	fmt.Println("Nouvelle partie créée")
+	http.Redirect(w, r, "/game", http.StatusSeeOther)
+}
+
+func generateSessionID() string {
+	bytes := make([]byte, 16)
+	rand.Read(bytes)
+	return base64.URLEncoding.EncodeToString(bytes)
+}
+
+func getSession(r *http.Request) *Session {
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		sessionID := generateSessionID()
+		session := &Session{
+			ID:   sessionID,
+			Game: models.NewGame(),
+		}
+		sessions[sessionID] = session
+		return session
+	}
+	sessionID := cookie.Value
+	if session, exists := sessions[sessionID]; exists {
+		return session
+	}
+	sessionID = generateSessionID()
+	session := &Session{
+		ID:   sessionID,
+		Game: models.NewGame(),
+	}
+	sessions[sessionID] = session
+	return session
+}
+
+func setSession(w http.ResponseWriter, session *Session) {
+	cookie := &http.Cookie{
+		Name:  "session_id",
+		Value: session.ID,
+		Path:  "/",
+	}
+	http.SetCookie(w, cookie)
+}
+
+func startHandler(w http.ResponseWriter, r *http.Request) {
+	data := struct {
+		Title string
+	}{
+		Title: "Accueil",
+	}
+	err := templates.ExecuteTemplate(w, "start.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func startGameHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		return
+	}
+
+	player1 := r.FormValue("player1")
+	player2 := r.FormValue("player2")
+	difficulty := r.FormValue("difficulty")
+
+	if player1 == "" || player2 == "" {
+		http.Error(w, "Noms des joueurs requis", http.StatusBadRequest)
+		return
+	}
+	sessionID := generateSessionID()
+	session := &Session{
+		ID:   sessionID,
+		Game: models.NewGameWithDifficulty(difficulty, player1, player2),
+	}
+	sessions[sessionID] = session
+	setSession(w, session)
+
+	http.Redirect(w, r, "/game", http.StatusSeeOther)
+}
+
+func victoryHandler(w http.ResponseWriter, r *http.Request) {
+	session := getSession(r)
+
+	data := struct {
+		Title       string
+		GameState   string
+		Winner      int
+		Player1Name string
+		Player2Name string
+		Difficulty  string
+		Rows        int
+		Cols        int
+	}{
+		Title:       "Résultat",
+		GameState:   session.Game.GameState,
+		Winner:      session.Game.Winner,
+		Player1Name: session.Game.Player1Name,
+		Player2Name: session.Game.Player2Name,
+		Difficulty:  session.Game.Difficulty,
+		Rows:        session.Game.Rows,
+		Cols:        session.Game.Cols,
+	}
+
+	err := templates.ExecuteTemplate(w, "victory.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func rematchHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		return
+	}
+	session := getSession(r)
+	oldGame := session.Game
+	session.Game = models.NewGameWithDifficulty(
+		oldGame.Difficulty,
+		oldGame.Player1Name,
+		oldGame.Player2Name,
+	)
+
+	http.Redirect(w, r, "/game", http.StatusSeeOther)
+}
+
+func newGameHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		return
+	}
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func main() {
-	http.HandleFunc("/", gameHandler)
+	http.HandleFunc("/", startHandler)
+	http.HandleFunc("/game", gameHandler)
+	http.HandleFunc("/start-game", startGameHandler)
 	http.HandleFunc("/move", moveHandler)
 	http.HandleFunc("/reset", resetHandler)
+	http.HandleFunc("/victory", victoryHandler)
+	http.HandleFunc("/rematch", rematchHandler)
+	http.HandleFunc("/new-game", newGameHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	log.Println("Serveur Puissance4 démarré sur http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
