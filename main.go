@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"power4-web/models"
 	"strconv"
 )
@@ -36,7 +37,11 @@ var funcMap = template.FuncMap{
 var templates *template.Template
 
 func init() {
-	templates = template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/*.html"))
+	var err error
+	templates, err = template.New("").Funcs(funcMap).ParseGlob("templates/*.html")
+	if err != nil {
+		log.Fatal("Erreur lors du chargement des templates:", err)
+	}
 }
 
 func gameHandler(w http.ResponseWriter, r *http.Request) {
@@ -249,6 +254,13 @@ func newGameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	if _, err := os.Stat("templates"); os.IsNotExist(err) {
+		log.Fatal("Le répertoire 'templates' n'existe pas")
+	}
+	if _, err := os.Stat("static"); os.IsNotExist(err) {
+		log.Fatal("Le répertoire 'static' n'existe pas")
+	}
+
 	http.HandleFunc("/", startHandler)
 	http.HandleFunc("/game", gameHandler)
 	http.HandleFunc("/start-game", startGameHandler)
@@ -258,6 +270,14 @@ func main() {
 	http.HandleFunc("/rematch", rematchHandler)
 	http.HandleFunc("/new-game", newGameHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	log.Println("Serveur Puissance4 démarré sur http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Configuration:")
+	log.Println("- Templates chargés:", len(templates.Templates()), "fichiers")
+	log.Println("- Répertoire statique: ./static")
+	log.Println("- Écoute sur toutes les interfaces (0.0.0.0:8080)")
+
+	if err := http.ListenAndServe("0.0.0.0:8080", nil); err != nil {
+		log.Fatal("Erreur lors du démarrage du serveur:", err)
+	}
 }
