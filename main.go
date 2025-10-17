@@ -44,29 +44,31 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 	setSession(w, session)
 
 	data := struct {
-		Title         string
-		Game          *models.Game
-		Board         [][]int
-		CurrentPlayer int
-		GameState     string
-		Winner        int
-		Player1Name   string
-		Player2Name   string
-		Difficulty    string
-		Rows          int
-		Cols          int
+		Title           string
+		Game            *models.Game
+		Board           [][]int
+		CurrentPlayer   int
+		GameState       string
+		Winner          int
+		Player1Name     string
+		Player2Name     string
+		Difficulty      string
+		Rows            int
+		Cols            int
+		GravityInverted bool
 	}{
-		Title:         "jeu",
-		Game:          session.Game,
-		Board:         session.Game.Board,
-		CurrentPlayer: session.Game.CurrentPlayer,
-		GameState:     session.Game.GameState,
-		Winner:        session.Game.Winner,
-		Player1Name:   session.Game.Player1Name,
-		Player2Name:   session.Game.Player2Name,
-		Difficulty:    session.Game.Difficulty,
-		Rows:          session.Game.Rows,
-		Cols:          session.Game.Cols,
+		Title:           "jeu",
+		Game:            session.Game,
+		Board:           session.Game.Board,
+		CurrentPlayer:   session.Game.CurrentPlayer,
+		GameState:       session.Game.GameState,
+		Winner:          session.Game.Winner,
+		Player1Name:     session.Game.Player1Name,
+		Player2Name:     session.Game.Player2Name,
+		Difficulty:      session.Game.Difficulty,
+		Rows:            session.Game.Rows,
+		Cols:            session.Game.Cols,
+		GravityInverted: session.Game.GravityInverted,
 	}
 	err := templates.ExecuteTemplate(w, "game.html", data)
 	if err != nil {
@@ -197,26 +199,28 @@ func victoryHandler(w http.ResponseWriter, r *http.Request) {
 	session := getSession(r)
 
 	data := struct {
-		Title       string
-		GameState   string
-		Winner      int
-		Player1Name string
-		Player2Name string
-		Difficulty  string
-		Rows        int
-		Cols        int
+		Title           string
+		GameState       string
+		Winner          int
+		Player1Name     string
+		Player2Name     string
+		Difficulty      string
+		Rows            int
+		Cols            int
+		GravityInverted bool
 	}{
-		Title:       "Résultat",
-		GameState:   session.Game.GameState,
-		Winner:      session.Game.Winner,
-		Player1Name: session.Game.Player1Name,
-		Player2Name: session.Game.Player2Name,
-		Difficulty:  session.Game.Difficulty,
-		Rows:        session.Game.Rows,
-		Cols:        session.Game.Cols,
+		Title:           "Résultat",
+		GameState:       session.Game.GameState,
+		Winner:          session.Game.Winner,
+		Player1Name:     session.Game.Player1Name,
+		Player2Name:     session.Game.Player2Name,
+		Difficulty:      session.Game.Difficulty,
+		Rows:            session.Game.Rows,
+		Cols:            session.Game.Cols,
+		GravityInverted: session.Game.GravityInverted,
 	}
 
-	err := templates.ExecuteTemplate(w, "victory.html", data)
+	err := templates.ExecuteTemplate(w, "base.html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
