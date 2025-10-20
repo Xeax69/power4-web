@@ -1,20 +1,17 @@
 package models
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
 
-type Difficulty struct {
+type DifficultyConfig struct {
 	Name string
 	Rows int
 	Cols int
 }
 
-var Difficulties = map[string]Difficulty{
+var Difficulties = map[string]DifficultyConfig{
 	"easy":   {"Facile", 6, 7},
-	"normal": {"Normal", 6, 9},
-	"hard":   {"Difficile", 7, 8},
+	"normal": {"Normal", 6, 7},
+	"hard":   {"Difficile", 8, 9},
 }
 
 const (
@@ -24,17 +21,15 @@ const (
 )
 
 type Game struct {
-	Board           [][]int
-	Rows            int
-	Cols            int
-	CurrentPlayer   int
-	GameState       string
-	Winner          int
-	Player1Name     string
-	Player2Name     string
-	Difficulty      string
-	GravityInverted bool
-	LastGravityFlip time.Time
+	Board         [][]int
+	Rows          int
+	Cols          int
+	CurrentPlayer int
+	GameState     string
+	Winner        int
+	Player1Name   string
+	Player2Name   string
+	Difficulty    string
 }
 
 func NewGame() *Game {
@@ -54,17 +49,15 @@ func NewGameWithDifficulty(difficultyKey, player1Name, player2Name string) *Game
 	}
 
 	game := &Game{
-		Board:           board,
-		Rows:            difficulty.Rows,
-		Cols:            difficulty.Cols,
-		CurrentPlayer:   PLAYER1,
-		GameState:       "playing",
-		Winner:          EMPTY,
-		Player1Name:     player1Name,
-		Player2Name:     player2Name,
-		Difficulty:      difficultyKey,
-		GravityInverted: false,
-		LastGravityFlip: time.Now(),
+		Board:         board,
+		Rows:          difficulty.Rows,
+		Cols:          difficulty.Cols,
+		CurrentPlayer: PLAYER1,
+		GameState:     "playing",
+		Winner:        EMPTY,
+		Player1Name:   player1Name,
+		Player2Name:   player2Name,
+		Difficulty:    difficultyKey,
 	}
 	return game
 }
@@ -93,29 +86,15 @@ func (g *Game) IsFull() bool {
 }
 
 func (g *Game) MakeMove(col int) error {
-	// Vérifier l'inversion de gravité avant le coup
-	g.CheckGravityInversion()
-
 	if !g.IsValidMove(col) {
 		return fmt.Errorf("coup invalide dans la colonne %d", col)
 	}
 
-	// Placer la pièce selon la gravité
-	if g.GravityInverted {
-		// Gravité inversée : placer du haut vers le bas
-		for row := 0; row < g.Rows; row++ {
-			if g.Board[row][col] == EMPTY {
-				g.Board[row][col] = g.CurrentPlayer
-				break
-			}
-		}
-	} else {
-		// Gravité normale : placer du bas vers le haut
-		for row := g.Rows - 1; row >= 0; row-- {
-			if g.Board[row][col] == EMPTY {
-				g.Board[row][col] = g.CurrentPlayer
-				break
-			}
+	// Placement normal : du bas vers le haut
+	for row := g.Rows - 1; row >= 0; row-- {
+		if g.Board[row][col] == EMPTY {
+			g.Board[row][col] = g.CurrentPlayer
+			break
 		}
 	}
 
@@ -174,44 +153,4 @@ func (g *Game) checkDirection(row, col, deltaRow, deltaCol, player int) bool {
 		count++
 	}
 	return count >= 4
-}
-
-func (g *Game) CheckGravityInversion() {
-	// Inverser la gravité toutes les 30 secondes
-	if time.Since(g.LastGravityFlip) >= 30*time.Second {
-		g.InvertGravity()
-		g.LastGravityFlip = time.Now()
-	}
-}
-
-func (g *Game) InvertGravity() {
-	g.GravityInverted = !g.GravityInverted
-	g.ApplyGravity()
-}
-
-func (g *Game) ApplyGravity() {
-	// Appliquer la physique selon la gravité actuelle
-	for col := 0; col < g.Cols; col++ {
-		pieces := []int{}
-		// Collecter toutes les pièces de la colonne
-		for row := 0; row < g.Rows; row++ {
-			if g.Board[row][col] != EMPTY {
-				pieces = append(pieces, g.Board[row][col])
-			}
-			g.Board[row][col] = EMPTY
-		}
-
-		// Replacer les pièces selon la gravité
-		if g.GravityInverted {
-			// Gravité inversée : vers le haut
-			for i, piece := range pieces {
-				g.Board[i][col] = piece
-			}
-		} else {
-			// Gravité normale : vers le bas
-			for i, piece := range pieces {
-				g.Board[g.Rows-1-i][col] = piece
-			}
-		}
-	}
 }

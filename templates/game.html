@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{.Title}} - Puissance 4</title>
+        <link rel="icon" href="data:,">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -19,11 +20,6 @@
         {{if eq .GameState "playing"}}
             <h2>Tour du joueur {{.CurrentPlayer}}</h2>
             <p class="player-{{.CurrentPlayer}}">À vous de jouer !</p>
-            {{if .GravityInverted}}
-                <div class="gravity-status inverted">⬆️ GRAVITÉ INVERSÉE ⬆️</div>
-            {{else}}
-                <div class="gravity-status normal">⬇️ Gravité normale</div>
-            {{end}}
         {{else if eq .GameState "won"}}
             <h2>🎉 Victoire ! 🎉</h2>
             <p class="player-{{.Winner}}">Le joueur {{.Winner}} a gagné !</p>

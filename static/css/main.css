@@ -1,34 +1,26 @@
-/* Power4 Futuriste - CSS Principal */
-/* Import des polices */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
 
-/* Import des thèmes */
 @import url('./themes/futuristic.css');
 
-/* Import des layouts */
 @import url('./layouts/main.css');
 
-/* Import des composants */
 @import url('./components/header.css');
 @import url('./components/game-board.css');
 @import url('./components/buttons.css');
 @import url('./components/game-status.css');
 @import url('./components/start-form.css');
 
-/* Utilitaires pour le zoom automatique (CSS pur) */
 .auto-zoom-container {
     transform-origin: center top;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Classes pour différents niveaux de zoom */
 .zoom-small { transform: scale(0.75); }
 .zoom-medium { transform: scale(0.85); }
 .zoom-large { transform: scale(0.95); }
 .zoom-normal { transform: scale(1.0); }
 .zoom-big { transform: scale(1.1); }
 
-/* Optimisations pour l'accessibilité */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -39,7 +31,6 @@
     }
 }
 
-/* Masquer les éléments décoratifs sur très petit écran */
 @media (max-width: 480px) {
     body::before {
         display: none;
