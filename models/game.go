@@ -2,16 +2,16 @@ package models
 
 import "fmt"
 
-type Difficulty struct {
+type DifficultyConfig struct {
 	Name string
 	Rows int
 	Cols int
 }
 
-var Difficulties = map[string]Difficulty{
+var Difficulties = map[string]DifficultyConfig{
 	"easy":   {"Facile", 6, 7},
-	"normal": {"Normal", 6, 9},
-	"hard":   {"Difficile", 7, 8},
+	"normal": {"Normal", 6, 7},
+	"hard":   {"Difficile", 8, 9},
 }
 
 const (
@@ -89,12 +89,15 @@ func (g *Game) MakeMove(col int) error {
 	if !g.IsValidMove(col) {
 		return fmt.Errorf("coup invalide dans la colonne %d", col)
 	}
+
+	// Placement normal : du bas vers le haut
 	for row := g.Rows - 1; row >= 0; row-- {
 		if g.Board[row][col] == EMPTY {
 			g.Board[row][col] = g.CurrentPlayer
 			break
 		}
 	}
+
 	if g.CheckWin() {
 		return nil
 	}

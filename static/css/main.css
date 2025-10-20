@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@import url('./themes/futuristic.css');
+
+@import url('./layouts/main.css');
+
+@import url('./components/header.css');
+@import url('./components/game-board.css');
+@import url('./components/buttons.css');
+@import url('./components/game-status.css');
+@import url('./components/start-form.css');
+
+.auto-zoom-container {
+    transform-origin: center top;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.zoom-small { transform: scale(0.75); }
+.zoom-medium { transform: scale(0.85); }
+.zoom-large { transform: scale(0.95); }
+.zoom-normal { transform: scale(1.0); }
+.zoom-big { transform: scale(1.1); }
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (max-width: 480px) {
+    body::before {
+        display: none;
+    }
+}

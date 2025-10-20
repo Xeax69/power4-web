@@ -1,0 +1,37 @@
+:root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #151520;
+    --bg-card: #1a1a2e;
+    
+    --player1-color: #ff2a6d;
+    --player2-color: #05d9e8;
+    
+    --accent-primary: #00f5ff;
+    --accent-secondary: #ff006e;
+    --text-primary: #ffffff;
+    --text-secondary: #b7e4ff;
+    --text-muted: #7c8db5;
+    
+    --board-color: #16213e;
+    --empty-color: #2a2d3e;
+    --border-color: #00f5ff;
+    
+    --glow-cyan: #00f5ff;
+    --glow-magenta: #ff006e;
+    --shadow-neon: 0 0 20px;
+    --shadow-deep: rgba(0, 0, 0, 0.8);
+    
+    --transition-fast: 0.3s ease;
+    --transition-normal: 0.5s ease;
+    --animation-glow: 2s ease-in-out infinite alternate;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}

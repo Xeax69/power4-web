@@ -221,7 +221,7 @@ func victoryHandler(w http.ResponseWriter, r *http.Request) {
 		Cols:        session.Game.Cols,
 	}
 
-	err := templates.ExecuteTemplate(w, "victory.html", data)
+	err := templates.ExecuteTemplate(w, "base.html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -1,0 +1,171 @@
+.game-status {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: 15px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 1px solid rgba(0, 245, 255, 0.3);
+    position: relative;
+}
+
+.game-status h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    font-family: 'Orbitron', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.game-status p {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.player-1 {
+    color: var(--player1-color) !important;
+    text-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
+}
+
+.player-2 {
+    color: var(--player2-color) !important;
+    text-shadow: 0 0 10px rgba(5, 217, 232, 0.5);
+}
+
+.victory-container {
+    text-align: center;
+}
+
+.victory-section,
+.draw-section {
+    margin-bottom: 2rem;
+    padding: 3rem 2rem;
+    border-radius: 15px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.victory-title,
+.draw-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-primary);
+    margin-bottom: 1.5rem;
+    font-family: 'Orbitron', monospace;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px var(--glow-cyan);
+}
+
+.winner-card {
+    display: inline-block;
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    margin: 1rem 0;
+    border: 2px solid;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.winner-card.player-1 {
+    background: rgba(255, 42, 109, 0.2);
+    border-color: var(--player1-color);
+    color: var(--player1-color);
+}
+
+.winner-card.player-2 {
+    background: rgba(5, 217, 232, 0.2);
+    border-color: var(--player2-color);
+    color: var(--player2-color);
+}
+
+.winner-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-family: 'Orbitron', monospace;
+}
+
+.winner-trophy {
+    font-size: 3rem;
+    margin-top: 1rem;
+}
+
+.draw-announcement p {
+    font-size: 1.3rem;
+    margin: 1rem 0;
+    color: var(--text-secondary);
+}
+
+.draw-icon {
+    font-size: 4rem;
+    margin: 1rem 0;
+}
+.stats-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(26, 26, 46, 0.5);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.stats-section h4 {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', monospace;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stat-value {
+    color: var(--accent-primary);
+    font-weight: 700;
+    font-family: 'Orbitron', monospace;
+}
+
+.victory-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+@media (max-width: 768px) {
+    .victory-title,
+    .draw-title {
+        font-size: 2.2rem;
+    }
+    
+    .winner-card h3 {
+        font-size: 1.6rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-status h2 {
+        font-size: 1.6rem;
+    }
+    
+    .game-status p {
+        font-size: 1.1rem;
+    }
+}
